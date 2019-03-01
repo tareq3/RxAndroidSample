@@ -19,6 +19,7 @@ import android.widget.EditText;
 import com.mti.rxandroidsample.adapter.ListItemAdapter;
 import com.mti.rxandroidsample.model.GitHubRepo;
 import com.mti.rxandroidsample.repository.GitHubClient;
+import com.mti.rxandroidsample.repository.GitHubService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +32,15 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private ListItemAdapter adapter ;
-    // private Subscription subscription;
+     // private Subscription subscription;
     private Disposable disposable;
     private List<GitHubRepo> gitHubRepos = new ArrayList<>();
 
 
 
     RecyclerView recyclerView;
+    private ListItemAdapter adapter ;
+
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void getStarredRepos(String username) {
 
-        disposable = GitHubClient.getInstance()
-                .getStarredRepos(username)
+        disposable = GitHubClient.getClient().create(GitHubService.class)
+                .getStarredRepositories(username)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

@@ -22,33 +22,26 @@ public class GitHubClient {
 
     private static final String GITHUB_BASE_URL = "https://api.github.com/";
 
-    private static GitHubClient instance;
-    private GitHubService gitHubService;
+     private static Retrofit retrofit=null;
 
-    private GitHubClient() {
-        final Gson gson =
-            new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-        final Retrofit retrofit = new Retrofit.Builder().baseUrl(GITHUB_BASE_URL)
-                                                        .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-                                                        .addConverterFactory(GsonConverterFactory.create(gson))
-                                                        .build();
-        gitHubService = retrofit.create(GitHubService.class);
-    }
 
-    public static GitHubClient getInstance() {
-        if (instance == null) {
-            instance = new GitHubClient();
+
+    public static Retrofit getClient() {
+        if (retrofit == null) {
+            final Gson gson =
+                    new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+
+            retrofit =  new Retrofit.Builder().baseUrl(GITHUB_BASE_URL)
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
         }
-        return instance;
+        return retrofit;
     }
 
-   /* public Observable<List<GitHubRepo>> getStarredRepos(@NonNull String userName) {
-        return gitHubService.getStarredRepositories(userName);
-    }*/
 
-    public  io.reactivex.Observable<List<GitHubRepo>> getStarredRepos(@NonNull String userName){
-        return gitHubService.getStarredRepositories(userName);
-    }
+
+
 }
 
 
